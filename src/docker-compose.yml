@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+
+  db:
+    image: postgres:15-alpine
+    restart: always
+    env_file:
+      - app/.env
+    # volumes:
+    #   - "db:/var/lib/postgresql/data"
+#    healthcheck:
+#      test: [ "CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'" ]
+#      interval: 10s
+#      timeout: 3s
+#      retries: 3
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    command: /bin/sh -c "start.sh"
+    env_file:
+      - app/.env
+    ports:
+      - "3333:80"
+    depends_on:
+      - db

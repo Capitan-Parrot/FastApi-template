@@ -17,6 +17,6 @@ class UserRegister(BaseModel):
     password: str
 
 
-class UserLogin(UserBase):
+class UserLogin(BaseModel):
     email: EmailStr
     password: str

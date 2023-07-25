@@ -1,4 +1,4 @@
-from fastapi import HTTPException, Depends
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 import secrets
@@ -38,10 +38,13 @@ def update(db, user_id: int, user_data: UserBase):
     if not user:
         raise HTTPException(status_code=400, detail="Пользователь не существует")
     for key, value in user_data:
-        setattr(user, key, value)
+        if key == "password":
+            setattr(user, "hashed_password", get_password_hash(value))
+        else:
+            setattr(user, key, value)
 
 
-def create_user(db: Session, user: UserRegister):
+def create_user(db: Session, user: UserRegister) -> (User, str):
     curr_user = get_user_by_email(db, user.email)
     if curr_user:
         raise HTTPException(status_code=400, detail="Пользователь с такой почтой уже существует")
@@ -55,10 +58,10 @@ def create_user(db: Session, user: UserRegister):
     return db_user, password
 
 
-def authenticate_user(db: Session, user: UserLogin):
-    user = get_user_by_email(db, user.email)
-    if not user:
-        return False
-    if not verify_password(user.password, user.hashed_password):
-        return False
-    return user
+def authenticate_user(db: Session, user: UserLogin) -> User:
+    db_user = get_user_by_email(db, user.email)
+    if not db_user:
+        raise HTTPException(status_code=400, detail="Пользователь с такой почтой не существует")
+    if not verify_password(user.password, db_user.hashed_password):
+        raise HTTPException(status_code=400, detail="Неверная пара почта/пароль")
+    return db_user
