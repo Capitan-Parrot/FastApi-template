@@ -1,10 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException, Response
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app.schemas.users import UserBase, UserRegister, UserLogin
-
 from app.database import get_db
-from app.services.users import create_user, get_user_by_id, get_user_by_email, authenticate_user, delete, get_users
+from app.schemas.users import UserBase
+from app.services.users import get_user_by_id, delete, get_users
+from app.models import User
+from app.services.login import get_current_user
 
 router = APIRouter(prefix="/users", tags=["user"])
 
@@ -15,31 +18,16 @@ def index(db: Session = Depends(get_db)):
     return all_users
 
 
+@router.get("/me", response_model=UserBase)
+def get_me(user: Annotated[User, Depends(get_current_user)]):
+    return user
+
+
 @router.get("/{user_id}", response_model=UserBase)
 def get_user(user_id: int, db: Session = Depends(get_db)):
     user = get_user_by_id(db, user_id)
     if not user:
         raise HTTPException(status_code=400, detail="Пользователя не существует")
-    return user
-
-
-@router.post("/register", response_model=UserBase)
-def register(register_request: UserRegister, db: Session = Depends(get_db)):
-    user = get_user_by_email(db, register_request.email)
-    if user:
-        raise HTTPException(status_code=400, detail="Пользователь с такой почтой уже существует")
-    # request = UserService.get_register_request_by_email(db, register_request.email)
-    # if request:
-    #     raise HTTPException(status_code=400, detail="Ваш запрос уже существует")
-    user, hash_password = create_user(db, register_request)
-    return user
-
-
-@router.post("/login", response_model=UserBase)
-def login(login_request: UserLogin, db: Session = Depends(get_db)):
-    user = authenticate_user(db, login_request)
-    if not user:
-        raise HTTPException(status_code=400, detail="Почта или пароль некорректны")
     return user
 
 

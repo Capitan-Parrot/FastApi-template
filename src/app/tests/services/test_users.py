@@ -8,25 +8,24 @@ from app.schemas.users import UserLogin
 
 
 def test_create_user(db: Session):
-    user_in, email = create_user_schema()
+    user_in = create_user_schema()
 
-    user, password = create_user(db, user_in)
+    user = create_user(db, user_in)
 
-    assert user.email == email
+    assert user.email == user_in.email
     assert hasattr(user, "hashed_password")
 
 
 def test_create_user_that_exists(db: Session):
     user_in, email = create_user_schema()
-    user, password = create_user(db, user_in)
 
     with pytest.raises(HTTPException):
         create_user(db, user_in)
 
 
 def test_get_user_by_email(db: Session):
-    user_in, email = create_user_schema()
-    registered_user, password = create_user(db, user_in)
+    user_in = create_user_schema()
+    registered_user = create_user(db, user_in)
 
     user = get_user_by_email(db, registered_user.email)
 
@@ -34,7 +33,7 @@ def test_get_user_by_email(db: Session):
 
 
 def test_get_user_by_id(db: Session):
-    user_in, email = create_user_schema()
+    user_in = create_user_schema()
     registered_user, password = create_user(db, user_in)
 
     user = get_user_by_id(db, registered_user.id)
@@ -43,9 +42,9 @@ def test_get_user_by_id(db: Session):
 
 
 def test_authenticate_user(db: Session):
-    user_in, email = create_user_schema()
-    registered_user, password = create_user(db, user_in)
-    login_in = UserLogin(email=registered_user.email, password=password)
+    user_in = create_user_schema()
+    registered_user = create_user(db, user_in)
+    login_in = UserLogin(email=registered_user.email, password=user_in.password)
 
     login_user = authenticate_user(db, login_in)
 
@@ -53,7 +52,7 @@ def test_authenticate_user(db: Session):
 
 
 def test_authenticate_user_fail(db: Session):
-    user_in, email = create_user_schema()
+    user_in = create_user_schema()
 
     with pytest.raises(HTTPException):
         authenticate_user(db, user_in)

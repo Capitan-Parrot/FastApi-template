@@ -11,6 +11,9 @@ class Settings(BaseSettings):
     postgres_server: str
     postgres_db: str
 
+    jwt_secret_key: str
+    hash_algorithm: str
+    access_token_expire_minutes: int
     # jwt_secret: str
     # jwt_algorithm: str = 'hs256'
     # jwt_expires_s: int = 3600
