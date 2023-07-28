@@ -1,1 +1,1 @@
-web: sh -c "src/start.sh"
+web: sh -c "alembic upgrade head && uvicorn src.app.__main__:app --host 0.0.0.0 --port 80"
