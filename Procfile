@@ -1,1 +1,1 @@
-web: sh -c "cd src && alembic upgrade head && uvicorn app.__main__:app"
+web: sh -c "cd src && alembic upgrade head && uvicorn app.__main__:app --workers 4"
