@@ -7,7 +7,7 @@ from app.core.database import get_db
 from app.schemas.users import UserBase
 from app.services.users import get_user_by_id, delete, get_users
 from app.models import User
-from app.services.login import get_current_user
+from app.services.auth import get_current_user
 
 router = APIRouter(prefix="/users", tags=["user"])
 

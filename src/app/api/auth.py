@@ -13,7 +13,7 @@ from app.services.users import create_user
 from app.core.security import create_access_token
 from app.core.settings import settings
 from app.schemas.tokens import Token
-from app.services.login import authenticate_user
+from app.services.auth import authenticate_user
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
