@@ -7,9 +7,9 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app.database import get_db
+from app.core.database import get_db
 from app.schemas.users import UserBase, UserRegister, UserLogin
-from app.services.users import create_user, get_user_by_email
+from app.services.users import create_user
 from app.core.security import create_access_token
 from app.core.settings import settings
 from app.schemas.tokens import Token
@@ -21,14 +21,6 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 @router.post("/register", response_model=UserBase)
 def register(register_request: UserRegister, db: Session = Depends(get_db)):
     user = create_user(db, register_request)
-    return user
-
-
-@router.post("/login", response_model=UserBase)
-def login(login_request: UserLogin, db: Session = Depends(get_db)):
-    user = authenticate_user(db, login_request)
-    if not user:
-        raise HTTPException(status_code=400, detail="Почта или пароль некорректны")
     return user
 
 

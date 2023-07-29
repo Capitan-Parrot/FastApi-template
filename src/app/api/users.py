@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app.database import get_db
+from app.core.database import get_db
 from app.schemas.users import UserBase
 from app.services.users import get_user_by_id, delete, get_users
 from app.models import User

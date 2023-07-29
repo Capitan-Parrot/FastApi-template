@@ -3,7 +3,7 @@ from typing import Generator
 import pytest
 from fastapi.testclient import TestClient
 
-from app.database import SessionLocal
+from core.database import SessionLocal
 from app.__main__ import app
 
 

@@ -11,7 +11,7 @@ from app.models import User
 from app.schemas.tokens import TokenData
 from app.schemas.users import UserLogin
 from app.services.users import get_user_by_email
-from app.database import get_db
+from app.core.database import get_db
 
 
 def authenticate_user(db: Session, user: UserLogin) -> User:
