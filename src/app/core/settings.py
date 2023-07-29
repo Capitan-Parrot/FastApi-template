@@ -5,7 +5,6 @@ class Settings(BaseSettings):
     server_host: str = '127.0.0.1'
     server_port: int = 8000
 
-    sqlalchemy_database_url: str
     postgres_user: str
     postgres_password: str
     postgres_server: str
