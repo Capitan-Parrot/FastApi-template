@@ -6,7 +6,7 @@ services:
     image: postgres:15-alpine
     restart: always
     env_file:
-      - app/.env
+      - app/prod.env
     # volumes:
     #   - "db:/var/lib/postgresql/data"
 #    healthcheck:
@@ -17,12 +17,11 @@ services:
 
   web:
     build:
-      context: .
-      dockerfile: Dockerfile
+      dockerfile: app/Dockerfile
     restart: always
     command: /bin/sh -c "start.sh"
     env_file:
-      - app/.env
+      - app/prod.env
     ports:
       - "3333:80"
     depends_on:
