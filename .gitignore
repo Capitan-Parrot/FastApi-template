@@ -2,3 +2,4 @@ venv/
 .idea
 .pytest_cache/
 app/.env
+app/prod.env

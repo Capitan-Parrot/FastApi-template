@@ -1,20 +1,6 @@
 version: '3.8'
 
 services:
-
-  db:
-    image: postgres:15-alpine
-    restart: always
-    env_file:
-      - app/prod.env
-    # volumes:
-    #   - "db:/var/lib/postgresql/data"
-#    healthcheck:
-#      test: [ "CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'" ]
-#      interval: 10s
-#      timeout: 3s
-#      retries: 3
-
   web:
     build:
       dockerfile: app/Dockerfile
@@ -26,3 +12,34 @@ services:
       - "3333:80"
     depends_on:
       - db
+
+  db:
+    image: postgres:15-alpine
+    restart: always
+    env_file:
+      - app/prod.env
+    # volumes:
+    #   - "db:/var/lib/postgresql/data"
+  #    healthcheck:
+  #      test: [ "CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'" ]
+  #      interval: 10s
+  #      timeout: 3s
+  #      retries: 3
+
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"

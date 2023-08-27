@@ -6,7 +6,7 @@ allow_create_resource = RoleChecker(["ADMIN"])
 router = APIRouter(prefix="/admin", tags=["admin"], dependencies=[Depends(allow_create_resource)])
 
 
-@router.get("/check_is_admin", response_model=bool)
+@router.get("/is_admin", response_model=bool)
 def is_admin():
     return True
 
