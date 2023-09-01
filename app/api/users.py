@@ -1,48 +1,42 @@
 from typing import Annotated
-
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
 
-from app.core.database import get_db
-from app.schemas.users import UserBase
-from app.services.users import get_user_by_id, delete, get_users
-from app.models import User
-from app.services.auth import get_current_user
+from app.core.security import oauth2_scheme
+from app.schemas.users import UserBase, User
+from app.services.auth import AuthService, get_auth_service
+from app.services.users import get_user_service, UserService
+
 
 router = APIRouter(prefix="/users", tags=["user"])
 
 
-@router.get("/", response_model=list[UserBase])
-def index(db: Session = Depends(get_db)):
-    all_users = get_users(db)
+@router.get("/", response_model=list[User])
+def index(user_service: UserService = Depends(get_user_service)):
+    all_users = user_service.get_users()
     return all_users
 
 
-@router.get("/me", response_model=UserBase)
-def get_me(user: Annotated[User, Depends(get_current_user)]):
+@router.get("/me", response_model=User)
+async def get_me(token: Annotated[str, Depends(oauth2_scheme)], auth_service: AuthService = Depends(get_auth_service)):
+    user = await auth_service.get_current_user(token)
     return user
 
 
-@router.get("/{user_id}", response_model=UserBase)
-def get_user(user_id: int, db: Session = Depends(get_db)):
-    user = get_user_by_id(db, user_id)
+@router.get("/{user_id}", response_model=User)
+async def get_user(user_id: int, user_service: UserService = Depends(get_user_service)):
+    user = await user_service.get_user_by_id(user_id)
     if not user:
         raise HTTPException(status_code=400, detail="Пользователя не существует")
     return user
 
 
-@router.delete("/{user_id}")
-def delete_user(user_id: int, db: Session = Depends(get_db)):
-    delete(db, user_id)
-    db.commit()
+@router.delete("/{user_id}", response_model=bool)
+async def delete_user(user_id: int, user_service: UserService = Depends(get_user_service)):
+    await user_service.delete(user_id)
+    return True
 
 
-@router.put("/{user_id}", response_model=UserBase)
-def update_user(user_id: int, user_data: UserBase, db: Session = Depends(get_db)):
-    user = get_user_by_id(db, user_id)
-    for key, value in user_data:
-        setattr(user, key, value)
-    db.add(user)
-    db.commit()
-    db.refresh(user)
+@router.put("/{user_id}", response_model=User)
+async def update_user(user_id: int, user_data: UserBase, user_service: UserService = Depends(get_user_service)):
+    user = await user_service.update(user_id, user_data)
     return user

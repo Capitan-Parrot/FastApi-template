@@ -1,9 +1,10 @@
 from fastapi import FastAPI
 import uvicorn
 from starlette.middleware.cors import CORSMiddleware
+from prometheus_fastapi_instrumentator import Instrumentator
 
 from app.api.index import router
-from app.core.settings import settings
+from app.settings import settings
 
 app = FastAPI()
 app.add_middleware(
@@ -14,6 +15,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(router)
+Instrumentator().instrument(app).expose(app)
 
 
 @app.get("/")
@@ -25,5 +27,5 @@ if __name__ == "__main__":
         'app.__main__:app',
         host=settings.server_host,
         port=settings.server_port,
-        reload=True,
+        reload=True
     )

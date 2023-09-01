@@ -10,6 +10,9 @@ class Settings(BaseSettings):
     postgres_server: str
     postgres_db: str
 
+    redis_host: str = '127.0.0.1'
+    redis_port: int = 6379
+
     jwt_secret_key: str
     hash_algorithm: str
     access_token_expire_minutes: int
@@ -19,6 +22,6 @@ class Settings(BaseSettings):
 
 
 settings = Settings(
-    _env_file='app/.env',
+    _env_file='.env',
     _env_file_encoding='utf-8',
 )
