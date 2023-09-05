@@ -1,1 +1,1 @@
-web: sh -c "cd src && alembic upgrade head && uvicorn app.__main__:app --host=0.0.0.0 --port=${PORT}"
+web: sh -c "cd app && alembic upgrade head && uvicorn app.__main__:app --host=0.0.0.0 --port=${PORT}"
