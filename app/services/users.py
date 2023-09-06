@@ -2,7 +2,7 @@ from fastapi import HTTPException, Depends
 from passlib.context import CryptContext
 
 from app.repositories.user.postgresql import UserRepository, get_user_repository
-from app.repositories.user.redis import UserRepositoryCache, get_user_repository_cache
+from app.repositories.user.redis_repo import UserRepositoryCache, get_user_repository_cache
 from app.schemas.users import UserBase, User
 from app.core.security import get_password_hash
 

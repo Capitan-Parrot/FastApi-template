@@ -1,4 +1,4 @@
-from aioredis import ConnectionPool
+from redis import ConnectionPool
 from typing import Generator
 
 import pytest
