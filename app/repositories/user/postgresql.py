@@ -20,8 +20,8 @@ class UserRepository:
         self.db.commit()
 
     def create(self, user: UserBase) -> UserDB:
-        hashed_password = get_password_hash(user["password"])
-        db_user = UserDB(email=user["email"], hashed_password=hashed_password)
+        hashed_password = get_password_hash(user.password)
+        db_user = UserDB(email=user.email, hashed_password=hashed_password)
         self.db.add(db_user)
         self.db.commit()
         self.db.refresh(db_user)
