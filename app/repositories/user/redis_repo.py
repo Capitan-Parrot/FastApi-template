@@ -18,12 +18,12 @@ class UserRepositoryCache:
     async def get_multi(self, user_id: int) -> list[UserDB]:
         pass
 
-    async def set(self, user_id: int, user: UserDB) -> None:
+    def set(self, user_id: int, user: UserDB) -> None:
         user.is_banned = str(user.is_banned)
         self.cache.hset(f'user:{user_id}', mapping=jsonable_encoder(user))
         user.is_banned = bool(user.is_banned)
 
-    async def delete(self, user_id: int) -> None:
+    def delete(self, user_id: int) -> None:
         self.cache.delete(f'user:{user_id}')
 
 

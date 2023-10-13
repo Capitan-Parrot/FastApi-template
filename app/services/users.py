@@ -15,7 +15,7 @@ class UserService:
         self.cache = cache
 
     async def delete(self, user_id: int) -> None:
-        await self.cache.delete(user_id)
+        self.cache.delete(user_id)
         self.db.delete(user_id)
 
     async def update(self, user_id: int, user_data: UserBase) -> User:
@@ -30,7 +30,7 @@ class UserService:
                 setattr(user, "hashed_password", get_password_hash(value))
             else:
                 setattr(user, key, value)
-        await self.cache.set(user_id, user)
+        self.cache.set(user_id, user)
         self.db.update(user)
 
         return user
@@ -41,7 +41,7 @@ class UserService:
             raise HTTPException(status_code=400, detail="Пользователь с такой почтой уже существует")
 
         curr_user = self.db.create(user)
-        await self.cache.set(curr_user.id, curr_user)
+        self.cache.set(curr_user.id, curr_user)
 
         return curr_user
 
@@ -57,7 +57,7 @@ class UserService:
 
     async def get_user_by_email(self, email: str) -> User:
         user = self.db.get_user_by_email(email)
-        await self.cache.set(user.id, user)
+        self.cache.set(user.id, user)
         return user
 
 

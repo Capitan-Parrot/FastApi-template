@@ -1,11 +1,10 @@
 from jose import jwt, JWTError
 from starlette import status
-from typing import Annotated
 from fastapi import HTTPException, Depends
 
 from app.services.users import UserService, get_user_service
 from app.settings import settings
-from app.core.security import verify_password, oauth2_scheme
+from app.core.security import verify_password
 from app.schemas.tokens import TokenData
 from app.schemas.users import UserBase, User
 
